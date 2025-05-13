@@ -61,8 +61,9 @@ if ($tipo == "registrar") {
             $apellidos_nombres = $_POST['apellidos_nombres'];
             $correo = $_POST['correo'];
             $telefono = $_POST['telefono'];
+            $password = $_POST['password'];
 
-            if ($dni == "" || $apellidos_nombres == "" || $correo == "" || $telefono == "") {
+            if ($dni == "" || $apellidos_nombres == "" || $correo == "" || $telefono == ""|| $password == "") {
                 //repuesta
                 $arr_Respuesta = array('status' => false, 'mensaje' => 'Error, campos vacíos');
             } else {
@@ -70,7 +71,7 @@ if ($tipo == "registrar") {
                 if ($arr_Usuario) {
                     $arr_Respuesta = array('status' => false, 'mensaje' => 'Registro Fallido, Usuario ya se encuentra registrado');
                 } else {
-                    $id_usuario = $objUsuario->registrarUsuario($dni, $apellidos_nombres, $correo, $telefono);
+                    $id_usuario = $objUsuario->registrarUsuario($dni, $apellidos_nombres, $correo, $telefono, $password);
                     if ($id_usuario > 0) {
                         // array con los id de los sistemas al que tendra el acceso con su rol registrado
                         // caso de administrador y director
@@ -105,7 +106,7 @@ if ($tipo == "actualizar") {
                 $arr_Usuario = $objUsuario->buscarUsuarioByDni($dni);
                 if ($arr_Usuario) {
                     if ($arr_Usuario->id == $id) {
-                        $consulta = $objUsuario->actualizarUsuario($id, $dni, $nombres_apellidos, $correo, $telefono, $estado);
+                        $consulta = $objUsuario->actualizarUsuario($id, $dni, $nombres_apellidos, $correo, $telefono,$contraseña, $estado);
                         if ($consulta) {
                             $arr_Respuesta = array('status' => true, 'mensaje' => 'Actualizado Correctamente');
                         } else {
@@ -115,7 +116,7 @@ if ($tipo == "actualizar") {
                         $arr_Respuesta = array('status' => false, 'mensaje' => 'dni ya esta registrado');
                     }
                 } else {
-                    $consulta = $objUsuario->actualizarUsuario($id, $dni, $nombres_apellidos, $correo, $telefono, $estado);
+                    $consulta = $objUsuario->actualizarUsuario($id, $dni, $nombres_apellidos, $correo, $telefono, $contraseña, $estado);
                     if ($consulta) {
                         $arr_Respuesta = array('status' => true, 'mensaje' => 'Actualizado Correctamente');
                     } else {
