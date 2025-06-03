@@ -24,6 +24,15 @@ $objAdmin = new AdminModel();
 $id_sesion = $_POST['sesion'];
 $token = $_POST['token'];
 
+if (tipo == "validar_datos_reset_password"){
+    $id = $_POST['id'];
+    $token_email = $_POST['token'];
+    $arr_Respuesta = array('status' => false, 'msg' => 'link caducado');
+    $datos_usuario = $objUsuario->buscarUsuarioById($id_email);
+    if ($datos_usuario->reset_password==1 && password_verify($datos_usuario->token_password,$token_email)){$arr_Respuesta = arrray('status' => true, 'msg' => 'OK');}
+    echo json_encode($arr_Respuesta);
+}
+
 if ($tipo == "listar_usuarios_ordenados_tabla") {
     $arr_Respuesta = array('status' => false, 'msg' => 'Error_Sesion');
     if ($objSesion->verificar_sesion_si_activa($id_sesion, $token)) {
@@ -201,8 +210,93 @@ try {
     $mail->isHTML(true);                                  //Set email format to HTML
     $mail->CharSet ='UTF-8';
     $mail->Subject = 'cambio de contraseña';
-    $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
-    
+    $mail->Body = '
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Correo Empresarial - El Papayal</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #fdf8f3;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background-color: #ffffff;
+      font-family: Arial, sans-serif;
+      color: #333333;
+      border: 1px solid #e0e0e0;
+    }
+    .header {
+      background-color: #ffa726;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .content {
+      padding: 30px;
+    }
+    .content h1 {
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+    .content p {
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    .button {
+      display: inline-block;
+      background-color: #66bb6a;
+      color: #ffffff !important;
+      padding: 12px 25px;
+      margin: 20px 0;
+      text-decoration: none;
+      border-radius: 4px;
+    }
+    .footer {
+      background-color: #f1f1f1;
+      text-align: center;
+      padding: 15px;
+      font-size: 12px;
+      color: #666666;
+    }
+    @media screen and (max-width: 600px) {
+      .content, .header, .footer {
+        padding: 15px !important;
+      }
+      .button {
+        padding: 10px 20px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2> EL PAPAYAL </h2>
+    </div>
+    <div class="content">
+      <h1>hola '.$datos_usuario->nombres_apellidos.',</h1>
+      <p>
+         Te saludamos cordialmente desde Papayal. Has solicitado cambiar tu contraseña. Este es tu código de verificación: <strong>987565</strong>.
+      </p>
+      <p>
+        Por seguridad, te recomendamos cambiarla lo antes posible y no compartirla con nadie.
+      </p>
+      <a href="'.BASE_URL.'reset-password?data=/'.$datos_usuario->id.'&data2='.$token.'" class="button">Cambiar contraseña</a>
+      <p style="font-size: 14px; color: #888;"> No respondas a este correo.</p>
+    </div>
+    <div class="footer">
+      © 2025 El Papayal – Todos los derechos reservados.
+    </div>
+  </div>
+</body>
+</html>';
+
 
     $mail->send();
     echo 'Message has been sent';
