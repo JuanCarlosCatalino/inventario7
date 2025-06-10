@@ -24,12 +24,14 @@ $objAdmin = new AdminModel();
 $id_sesion = $_POST['sesion'];
 $token = $_POST['token'];
 
-if (tipo == "validar_datos_reset_password"){
+if ($tipo == "validar_datos_reset_password"){
     $id = $_POST['id'];
     $token_email = $_POST['token'];
     $arr_Respuesta = array('status' => false, 'msg' => 'link caducado');
     $datos_usuario = $objUsuario->buscarUsuarioById($id_email);
-    if ($datos_usuario->reset_password==1 && password_verify($datos_usuario->token_password,$token_email)){$arr_Respuesta = arrray('status' => true, 'msg' => 'OK');}
+    if ($datos_usuario->reset_password==1 && password_verify($datos_usuario->token_password,$token_email)) {
+      $arr_Respuesta = array('status' => true, 'msg' => 'OK');
+    }
     echo json_encode($arr_Respuesta);
 }
 
@@ -287,7 +289,7 @@ try {
       <p>
         Por seguridad, te recomendamos cambiarla lo antes posible y no compartirla con nadie.
       </p>
-      <a href="'.BASE_URL.'reset-password?data=/'.$datos_usuario->id.'&data2='.$token.'" class="button">Cambiar contraseña</a>
+      <a href="'.BASE_URL.'reset-password/?data=/'.$datos_usuario->id.'&data2='.urlencode($token).'" class="button">Cambiar contraseña</a>
       <p style="font-size: 14px; color: #888;"> No respondas a este correo.</p>
     </div>
     <div class="footer">

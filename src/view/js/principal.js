@@ -175,6 +175,7 @@ async function validar_datos_reset_password(){
     const formData = new FormData();
     formData.append('id', id);
     formData.append('token', token);
+    formData.append('sesion','' );
 
     try {
         let respuesta = await fetch(base_url_server + 'src/control/usuario.php?tipo=validar_datos_reset_password', {
@@ -184,11 +185,54 @@ async function validar_datos_reset_password(){
             body: formData
         });
         let json = await respuesta.json();
-        if (json.status) {
+        if (json.status == false) {
+            Swal.fire({
+        type: 'error',
+        title: 'Error de link',
+        text: "link Caducada, ver correo",
+        confirmButtonClass: 'btn btn-confirm mt-2',
+        footer: '',
+        timer: 1000
+    });
+    let formulario = document.getElementById('frm_reset-password');
+    formulario.innerHTML='chistoso'
+    //location.replace(base_url + "login");
         }
         //console.log(respuesta);
     } catch (e) {
         console.log("Error al validar datos" + e);
     }
 
+}
+
+
+function validar_inputs_password() {
+    let pass1 = document.getElementById('password').value;
+    let pass2 = document.getElementById('password1').value;
+    if (pass1 !== pass2) {
+        Swal.fire({
+        type: 'error',
+        title: 'Error ',
+        text: "contraseña no coincide",
+        footer: '',
+        timer: 1500
+    });
+    return;
+    }
+    if (pass1.length<8 && pass2.length<8) {
+        Swal.fire({
+        type: 'error',
+        title: 'Error ',
+        text: "contraseña minimo 8 caracteres",
+        footer: '',
+        timer: 1500
+    });
+    return;
+}else{
+    }
+    actualizar_password();
+}
+async function actualizar_password() {
+   
+    
 }
