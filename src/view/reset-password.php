@@ -80,7 +80,7 @@
 
 
   <div class="container" >
-    <h2>Recuperar Contraseña</h2>
+    <h2 class="form-content">Recuperar Contraseña</h2>
     <form id="frm_reset-password">
       
       <input type="text" id="password" name="password" placeholder="nueva contraseña" required>
