@@ -189,7 +189,7 @@ CREATE TABLE `movimientos` (
   `id_ambiente_origen` bigint(20) NOT NULL,
   `id_ambiente_destino` bigint(20) NOT NULL,
   `id_usuario_registro` int(11) NOT NULL,
-  `fecha_registro` date NOT NULL DEFAULT current_timestamp(),
+  `fecha_registro` datetime NOT NULL DEFAULT current_timestamp(),
   `descripcion` varchar(2000) NOT NULL,
   `id_ies` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;

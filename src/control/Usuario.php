@@ -37,7 +37,7 @@ if ($tipo == "reset_passwordd") {
       $arr_Usuario = $objUsuario->actualizarPassword($id_usu, $pass_hash);
       if ($arr_Usuario) {
         $tokennew = "";
-        $estadonew = "";
+        $estadonew = 0;
         $UpdateToken = $objUsuario->updateResetPassword($id_usu,$tokennew,$estadonew);
         if (!$UpdateToken) {
           $arr_Respuesta = array('status'=>false, 'msg'=>'Fallo vaciar campos token/estado');
