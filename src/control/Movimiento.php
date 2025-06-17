@@ -207,8 +207,17 @@ if ($tipo == "datos_registro") {
 }
 
 if ($tipo== "buscar_movimiento_id") {
+    $arr_Respuesta = array('status' => false, 'msg' => 'Error_Sesion');
    if ($objSesion->verificar_sesion_si_activa($id_sesion, $token)) {
-    
-    # code...
+    $id_movimiento = $_REQUEST['data'];
+    $arrMovimiento = $objMovimiento->buscarMovimientoById($id_movimiento);
+    $arrAmbOrigen = $objAmbiente->buscarAmbienteById($arrMovimiento->id_ambiente_origen);
+    $arrAmbDestino = $objAmbiente->buscarAmbienteById($arrMovimiento->id_ambiente_destino);
+    $arrUserReg = $objUsuario->buscarUsuarioById($arrMovimiento->id_usuario_registro);
+    $arrIes = $objInstitucion->buscarInstitucionById($arrMovimiento->id_ies);
+
+    //echo $id_movimiento;
    }
+   echo json_encode($arrIes);
+   echo json_encode($arrUserReg);
 }
