@@ -36,9 +36,6 @@ class UsuarioModel
 
     }
 
-
-
-
     public function buscarUsuarioById($id)
     {
         $sql = $this->conexion->query("SELECT * FROM usuarios WHERE id='$id'");

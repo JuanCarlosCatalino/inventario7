@@ -24,8 +24,35 @@ $objAdmin = new AdminModel();
 $id_sesion = $_POST['sesion'];
 $token = $_POST['token'];
 
+if ($tipo == "reset_passwordd") {
+  $arr_Respuesta = array('status'=> false, 'msg'=>'Error iniciar proceso');
+  if ($_POST) {
+     $id_usu = $_POST['id_usuario'];
+     $passw_new = $_POST['password'];
+     $pass_hash = password_hash($passw_new, PASSWORD_DEFAULT);
+
+     if ($id_usu == ""|| $passw_new == "") {
+      $arr_Respuesta = array('status'=>false, 'msg'=>'error de campos vacios');
+     } else {
+      $arr_Usuario = $objUsuario->actualizarPassword($id_usu, $pass_hash);
+      if ($arr_Usuario) {
+        $tokennew = "";
+        $estadonew = "";
+        $UpdateToken = $objUsuario->updateResetPassword($id_usu,$tokennew,$estadonew);
+        if (!$UpdateToken) {
+          $arr_Respuesta = array('status'=>false, 'msg'=>'Fallo vaciar campos token/estado');
+        } 
+        $arr_Respuesta = array('status'=>true, 'msg'=> 'Contraseña cambiada correctamente');      
+      } else {
+         $arr_Respuesta = array('status'=>false, 'msg'=> 'Fallo al cambiar contraseña');  
+      }
+     }
+  }
+  echo json_encode($arr_Respuesta);
+}
+
 if ($tipo == "validar_datos_reset_password"){
-    $id = $_POST['id'];
+    $id_email = $_POST['id'];
     $token_email = $_POST['token'];
     $arr_Respuesta = array('status' => false, 'msg' => 'link caducado');
     $datos_usuario = $objUsuario->buscarUsuarioById($id_email);
@@ -83,6 +110,7 @@ if ($tipo == "registrar") {
             $correo = $_POST['correo'];
             $telefono = $_POST['telefono'];
             $password = $_POST['password'];
+            $pass_security = password_hash($password, PASSWORD_DEFAULT);
 
             if ($dni == "" || $apellidos_nombres == "" || $correo == "" || $telefono == ""|| $password == "") {
                 //repuesta
@@ -92,7 +120,7 @@ if ($tipo == "registrar") {
                 if ($arr_Usuario) {
                     $arr_Respuesta = array('status' => false, 'mensaje' => 'Registro Fallido, Usuario ya se encuentra registrado');
                 } else {
-                    $id_usuario = $objUsuario->registrarUsuario($dni, $apellidos_nombres, $correo, $telefono, $password);
+                    $id_usuario = $objUsuario->registrarUsuario($dni, $apellidos_nombres, $correo, $telefono, $pass_security);
                     if ($id_usuario > 0) {
                         // array con los id de los sistemas al que tendra el acceso con su rol registrado
                         // caso de administrador y director
@@ -289,7 +317,7 @@ try {
       <p>
         Por seguridad, te recomendamos cambiarla lo antes posible y no compartirla con nadie.
       </p>
-      <a href="'.BASE_URL.'reset-password/?data=/'.$datos_usuario->id.'&data2='.urlencode($token).'" class="button">Cambiar contraseña</a>
+      <a href="'.BASE_URL.'reset-password/?data='.$datos_usuario->id.'&data2='.urlencode($token).'" class="button">Cambiar contraseña</a>
       <p style="font-size: 14px; color: #888;"> No respondas a este correo.</p>
     </div>
     <div class="footer">

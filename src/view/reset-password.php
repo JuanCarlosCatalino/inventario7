@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Recuperar Contraseña - Papayal</title>
+  <link rel="stylesheet" href="<?php echo BASE_URL ?>src/view/pp/plugins/sweetalert2/sweetalert2.min.css" type="text/css">
 <script>
   const base_url = '<?php echo BASE_URL;?>';
   const base_url_server = '<?php echo BASE_URL_SERVER;?>';
@@ -75,14 +76,14 @@
   </style>
 </head>
 <body>
-    <input type="hidden" id="data" value="<?php echo $_GET['data'];?>">
-    <input type="hidden" id="data2" value="<?php echo urldecode( $_GET['data2']); ?>">
+    
 
 
   <div class="container" >
     <h2 class="form-content">Recuperar Contraseña</h2>
     <form id="frm_reset-password">
-      
+      <input type="hidden" id="data" value="<?= isset($_GET['data']) ? htmlspecialchars($_GET['data']) : '' ?>">
+      <input type="hidden" id="data2" value="<?= isset($_GET['data2']) ? htmlspecialchars($_GET['data2']) : '' ?>">
       <input type="text" id="password" name="password" placeholder="nueva contraseña" required>
       <input type="text" id="password1" name="password1" placeholder="confirmar contraseña" required>
 
@@ -96,7 +97,7 @@
   </div>
 
 </body>
-<<script src="<?php echo BASE_URL; ?>src/view/js/principal.js"></script>
+<script src="<?php echo BASE_URL; ?>src/view/js/principal.js"></script>
 <script>
   validar_datos_reset_password();
 </script>

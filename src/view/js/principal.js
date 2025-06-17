@@ -229,10 +229,40 @@ function validar_inputs_password() {
     });
     return;
 }else{
-    }
     actualizar_password();
+    }
+    
 }
 async function actualizar_password() {
-   
+   let password = document.getElementById('password').value;
+   let id_usuario = document.getElementById('data').value;
+
+   const formdata = new FormData();
+   formdata.append('password',password);
+   formdata.append('id_usuario',id_usuario);
+   formdata.append('token','');
+   formdata.append('sesion', '');
+
+   try {
+    let response = await fetch(base_url_server + 'src/control/Usuario.php?tipo=reset_passwordd',{
+         method: 'POST',
+         mode: 'cors',
+         cache: 'no-cache',
+         body: formdata
+    });
+    let json = await response.json();
+    if (json.status) {
+        Swal.fire({
+           type: 'success',
+           title: 'Actualizado',
+           text:  "Contraseña actualizada correctamente",
+           footer: '',
+           timer: 3000
+        });
+    }
+    
+   } catch (error) {
+      console.log('arror al actualizar contraseña'+ e);
+   }
     
 }
