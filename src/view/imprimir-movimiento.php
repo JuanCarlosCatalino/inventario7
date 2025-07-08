@@ -31,9 +31,9 @@ $curl = curl_init(); //inicia la sesión cURL
     } else {
        $respuesta = json_decode($response);
        // print_r($respuesta);
-       // $contenido_pdf = 
-       ?>
-      <!-- <!DOCTYPE html>
+        $contenido_pdf = '';
+        $contenido_pdf .= '
+        <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -82,9 +82,9 @@ $curl = curl_init(); //inicia la sesión cURL
   <div class="datos">
     <p><strong>ENTIDAD:</strong> DIRECCION REGIONAL DE EDUCACION - AYACUCHO</p>
     <p><strong>AREA:</strong> OFICINA DE ADMINISTRACIÓN</p>
-    <p><strong>ORIGEN:</strong> <?php echo $respuesta->amb_origen->codigo . ' - ' . $respuesta->amb_origen->detalle;?></p>
-    <p><strong>DESTINO:</strong> <?php echo $respuesta->amb_destino->codigo . ' - ' . $respuesta->amb_destino->detalle;?></p>
-    <p><strong>MOTIVO (*):</strong> <?php echo isset($respuesta->movimiento->descripcion) ? $respuesta->movimiento->descripcion : '______________________________________'; ?></p>
+    <p><strong>ORIGEN:</strong> ' . $respuesta->amb_origen->codigo . ' - ' . $respuesta->amb_origen->detalle . '</p>
+    <p><strong>DESTINO:</strong> ' . $respuesta->amb_destino->codigo . ' - ' . $respuesta->amb_destino->detalle . '</p>
+    <p><strong>MOTIVO (*):</strong> ' . (isset($respuesta->movimiento->descripcion) ? $respuesta->movimiento->descripcion : '______________________________________') . '</p>
   </div>
 
   <table>
@@ -99,34 +99,42 @@ $curl = curl_init(); //inicia la sesión cURL
         <th>ESTADO</th>
       </tr>
     </thead>
-    <tbody>
-      <?php
-      if (isset($respuesta->bien) && is_array($respuesta->bien) && count($respuesta->bien) > 0) {
-        $item = 1;
-        foreach ($respuesta->bien as $bien) {
-          echo '<tr>';
-          echo '<td>' . str_pad($item, 2, '0', STR_PAD_LEFT) . '</td>';
-          echo '<td>' . $bien->cod_patrimonial . '</td>';
-          echo '<td>' . $bien->denominacion . '</td>';
-          echo '<td>' . $bien->marca . '</td>';
-          echo '<td>' . $bien->color . '</td>';
-          echo '<td>' . $bien->modelo . '</td>';
-          echo '<td>' . $bien->estado_conservacion . '</td>';
-          echo '</tr>';
+    <tbody>'
+       
+      
+      
+      if (isset($respuesta->detalle) && count($respuesta->detalle)> 0){
+        $i = 1;
+        foreach ($respuesta->detalle as $bien) {
+          $contenido_pdf.="<tr>";
+          $contenido_pdf.= '<td>' . $i . '</td>';
+          $contenido_pdf.= '<td>' . $bien->cod_patrimonial . '</td>';
+          $contenido_pdf.= '<td>' . $bien->denominacion . '</td>';
+          $contenido_pdf.= '<td>' . $bien->marca . '</td>';
+          $contenido_pdf.= '<td>' . $bien->color . '</td>';
+          $contenido_pdf.= '<td>' . $bien->modelo . '</td>';
+          $contenido_pdf.= '<td>' . $bien->estado_conservacion . '</td>';
+          $contenido_pdf.= '</tr>';
           $item++;
         }
-      } else {
-        echo '<tr><td colspan="7">No hay bienes registrados en este movimiento.</td></tr>';
+      } else {  
+        $contenido_pdf.= '<tr><td colspan="7">No hay bienes registrados en este movimiento.</td></tr>';
       }
-      ?>
+     
+      
     </tbody>
   </table>
 
-  <?php
+  ';
+
+  
     $meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
     $fecha = date('d') . ' de ' . $meses[date('n')-1] . ' del ' . date('Y');
-  ?>
-  <p style="text-align: right;">Ayacucho, <?php echo $fecha; ?></p>
+  
+  <p style="text-align: right;">Ayacucho, <?php $contenido_pdf.= $fecha; ?></p>
+  
+   $contenido_pdf.= '
+  
 
   <div class="firmas">
     <div class="firma">
@@ -140,11 +148,13 @@ $curl = curl_init(); //inicia la sesión cURL
   </div>
 
 </body>
-</html> -->
+</html> 
+';
 
 
 
-       <?php
+
+       
     
         require_once('./vendor/tecnickcom/tcpdf/tcpdf.php');
         $pdf = new TCPDF();
@@ -156,5 +166,15 @@ $curl = curl_init(); //inicia la sesión cURL
         $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
 
         $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+        $pdf->SetFont('helvetica', '', 12);
+
+        $pdf->AddPage();
+
+        // output the HTML content
+       $pdf->writeHTML($contenido_pdf, true, false, true, false, '');
+       //Close and output PDF document
+       $pdf->Output('example_006.pdf', 'I');
+
     }
     
