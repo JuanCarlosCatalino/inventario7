@@ -30,9 +30,131 @@ $curl = curl_init(); //inicia la sesión cURL
         echo "cURL Error #:" . $err; // mostramos el error
     } else {
        $respuesta = json_decode($response);
-       print_r($respuesta);
-        // en caso de funcionar correctamente
-        //echo $_SESSION['sesion_sigi_id'];
-        //echo $_SESSION['sesion_sigi_token'];*/
+       // print_r($respuesta);
+       // $contenido_pdf = 
+       ?>
+      <!-- <!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Papeleta de Rotación de Bienes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    h2 {
+      text-align: center;
+      font-weight: bold;
+    }
+    .datos {
+      margin-bottom: 20px;
+    }
+    .datos p {
+      margin: 5px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 40px;
+    }
+    table, th, td {
+      border: 1px solid black;
+    }
+    th, td {
+      padding: 8px;
+      text-align: center;
+    }
+    .firmas {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 50px;
+    }
+    .firma {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>PAPELETA DE ROTACION DE BIENES</h2>
+
+  <div class="datos">
+    <p><strong>ENTIDAD:</strong> DIRECCION REGIONAL DE EDUCACION - AYACUCHO</p>
+    <p><strong>AREA:</strong> OFICINA DE ADMINISTRACIÓN</p>
+    <p><strong>ORIGEN:</strong> <?php echo $respuesta->amb_origen->codigo . ' - ' . $respuesta->amb_origen->detalle;?></p>
+    <p><strong>DESTINO:</strong> <?php echo $respuesta->amb_destino->codigo . ' - ' . $respuesta->amb_destino->detalle;?></p>
+    <p><strong>MOTIVO (*):</strong> <?php echo isset($respuesta->movimiento->descripcion) ? $respuesta->movimiento->descripcion : '______________________________________'; ?></p>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ITEM</th>
+        <th>CODIGO PATRIMONIAL</th>
+        <th>NOMBRE DEL BIEN</th>
+        <th>MARCA</th>
+        <th>COLOR</th>
+        <th>MODELO</th>
+        <th>ESTADO</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php
+      if (isset($respuesta->bien) && is_array($respuesta->bien) && count($respuesta->bien) > 0) {
+        $item = 1;
+        foreach ($respuesta->bien as $bien) {
+          echo '<tr>';
+          echo '<td>' . str_pad($item, 2, '0', STR_PAD_LEFT) . '</td>';
+          echo '<td>' . $bien->cod_patrimonial . '</td>';
+          echo '<td>' . $bien->denominacion . '</td>';
+          echo '<td>' . $bien->marca . '</td>';
+          echo '<td>' . $bien->color . '</td>';
+          echo '<td>' . $bien->modelo . '</td>';
+          echo '<td>' . $bien->estado_conservacion . '</td>';
+          echo '</tr>';
+          $item++;
+        }
+      } else {
+        echo '<tr><td colspan="7">No hay bienes registrados en este movimiento.</td></tr>';
+      }
+      ?>
+    </tbody>
+  </table>
+
+  <?php
+    $meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    $fecha = date('d') . ' de ' . $meses[date('n')-1] . ' del ' . date('Y');
+  ?>
+  <p style="text-align: right;">Ayacucho, <?php echo $fecha; ?></p>
+
+  <div class="firmas">
+    <div class="firma">
+      <p>------------------------------</p>
+      <p>ENTREGUE CONFORME</p>
+    </div>
+    <div class="firma">
+      <p>------------------------------</p>
+      <p>RECIBI CONFORME</p>
+    </div>
+  </div>
+
+</body>
+</html> -->
+
+
+
+       <?php
+    
+        require_once('./vendor/tecnickcom/tcpdf/tcpdf.php');
+        $pdf = new TCPDF();
+
+        $pdf->SetCreator(PDF_CREATOR);
+        $pdf->SetAuthor('Catalino');
+        $pdf->SetTitle('Reporte de movimientos');
+
+        $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+
+        $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
     }
     
