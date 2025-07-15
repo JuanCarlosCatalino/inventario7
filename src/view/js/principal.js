@@ -232,7 +232,7 @@ function validar_inputs_password() {
     actualizar_password();
     }
     
-}
+}   
 async function actualizar_password() {
    let password = document.getElementById('password').value;
    let id_usuario = document.getElementById('data').value;
