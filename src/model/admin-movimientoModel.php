@@ -10,6 +10,14 @@ class MovimientoModel
         $this->conexion = new Conexion();
         $this->conexion = $this->conexion->connect();
     }
+    public function ObtenerMovimientos(){
+        $respuesta = array();
+        $sql = $this->conexion->query("SELECT * FROM movimientos");
+        while ($objeto = $sql->fetch_object()) {
+           array_push($respuesta,$objeto);
+        }
+        return $respuesta;
+    }
     public function registrarMovimiento($ambiente_origen, $ambiente_destino, $id_usuario, $descripcion, $institucion)
     {
         $sql = $this->conexion->query("INSERT INTO movimientos (id_ambiente_origen,id_ambiente_destino, id_usuario_registro, descripcion, id_ies) VALUES ('$ambiente_origen','$ambiente_destino','$id_usuario','$descripcion','$institucion')");

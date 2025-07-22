@@ -152,7 +152,6 @@ if ($tipo == "registrar") {
     }
     echo json_encode($arr_Respuesta);
 }
-
 if ($tipo == "actualizar") {
     $arr_Respuesta = array('status' => false, 'msg' => 'Error_Sesion');
     if ($objSesion->verificar_sesion_si_activa($id_sesion, $token)) {
@@ -205,7 +204,6 @@ if ($tipo == "datos_registro") {
     }
     echo json_encode($arr_Respuesta);
 }
-
 if ($tipo== "buscar_movimiento_id") {
     $arr_Respuesta = array('status' => false, 'msg' => 'Error_Sesion');
    if ($objSesion->verificar_sesion_si_activa($id_sesion, $token)) {
@@ -242,4 +240,32 @@ if ($tipo== "buscar_movimiento_id") {
    }
    
    echo json_encode($arr_Respuesta);
+}
+if ($tipo == "listarMovimientos") {
+    $arr_Respuesta = array('status' => false, 'msg' => 'Error_Sesion');
+      if ($objSesion->verificar_sesion_si_activa($id_sesion, $token)) {
+
+        $arrMovimientos = $objMovimiento->ObtenerMovimientos();
+
+        foreach ($arrMovimientos as &$movimiento) {
+            // Obtener los objetos relacionados por ID
+            $ambienteOrigen = $objAmbiente->buscarAmbienteById($movimiento->id_ambiente_origen);
+            $ambienteDestino = $objAmbiente->buscarAmbienteById($movimiento->id_ambiente_destino);
+            $usuario = $objUsuario->buscarUsuarioById($movimiento->id_usuario_registro);
+            $institucion = $objInstitucion->buscarInstitucionById($movimiento->id_ies);
+
+            // Asignar atributos "nombre" directamente al objeto del movimiento
+            $movimiento->ambiente_origen_nombre = $ambienteOrigen->detalle;
+            $movimiento->ambiente_destino_nombre = $ambienteDestino->detalle;
+            $movimiento->usuario_nombre = $usuario->nombres_apellidos;
+            $movimiento->institucion_nombre = $institucion->nombre;
+        }
+
+        // Preparar respuesta
+        $arr_Respuesta['movimientos'] = $arrMovimientos;
+        $arr_Respuesta['status'] = true;
+        $arr_Respuesta['msg'] = 'Movimientos listados correctamente';
+
+      }
+    echo json_encode($arr_Respuesta);
 }

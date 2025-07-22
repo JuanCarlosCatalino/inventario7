@@ -5,6 +5,7 @@ require_once('../model/admin-bienModel.php');
 require_once('../model/admin-ingresoModel.php');
 require_once('../model/admin-ambienteModel.php');
 require_once('../model/adminModel.php');
+require_once('../model/admin-usuarioModel.php');
 $tipo = $_GET['tipo'];
 
 //instanciar la clase categoria model
@@ -13,10 +14,11 @@ $objBien = new BienModel();
 $objIngreso = new IngresoModel();
 $objAmbiente = new AmbienteModel();
 $objAdmin = new AdminModel();
+$objUsuario = new UsuarioModel();
 
 //variables de sesion
-$id_sesion = $_POST['sesion'];
-$token = $_POST['token'];
+$id_sesion = $_REQUEST['sesion'];
+$token = $_REQUEST['token'];
 
 if ($tipo == "buscar_bien_movimiento") {
     $arr_Respuesta = array('status' => false, 'msg' => 'Error_Sesion');
@@ -224,6 +226,26 @@ if ($tipo == "datos_registro") {
         $arr_Respuesta['instituciones'] = $arr_Instirucion;
         $arr_Respuesta['status'] = true;
         $arr_Respuesta['msg'] = "Datos encontrados";
+    }
+    echo json_encode($arr_Respuesta);
+}
+
+if($tipo == "ObtenerTodosBienes"){
+   $arr_Respuesta = array('status' => false, 'msg' => 'Error_Sesion');
+    if ($objSesion->verificar_sesion_si_activa($id_sesion, $token)) {
+        $arr_bienes = $objBien->ObtenerBienes();
+                for ($i = 0; $i < count($arr_bienes); $i++) {
+                $ambiente = $objAmbiente->buscarAmbienteById($arr_bienes[$i]->id_ambiente);
+                $usuario = $objUsuario->buscarUsuarioById($arr_bienes[$i]->usuario_registro);
+                // agregamos solo la informacion que se desea enviar a la vista
+                $arr_bienes[$i]->nombreAmbiente = $ambiente->detalle;
+                $arr_bienes[$i]->nombreUsuario = $usuario->nombres_apellidos;
+            }
+       
+       $arr_Respuesta['bienes'] = $arr_bienes;
+       $arr_Respuesta['status'] = true;
+       $arr_Respuesta['msg'] = 'listado correcto';
+
     }
     echo json_encode($arr_Respuesta);
 }

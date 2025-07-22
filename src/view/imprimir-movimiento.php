@@ -4,24 +4,6 @@ if (!isset($ruta[1]) || $ruta[1]=="") {
     header("location:" . BASE_URL . "movimientos");
 }
 
-$curl = curl_init();
-curl_setopt_array($curl, array(
-    CURLOPT_URL => BASE_URL_SERVER . "src/control/Movimiento.php?tipo=buscar_movimiento_id&sesion=" . $_SESSION['sesion_id'] . "&token=" . $_SESSION['sesion_token'] . "&data=" . $ruta[1],
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_ENCODING => "",
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 30,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-    CURLOPT_CUSTOMREQUEST => "GET",
-    CURLOPT_HTTPHEADER => array(
-        "x-rapidapi-host: " . BASE_URL_SERVER,
-        "x-rapidapi-key: XXXX"
-    ),
-));
-$response = curl_exec($curl);
-$err = curl_error($curl);
-curl_close($curl);
 
 require_once('./vendor/tecnickcom/tcpdf/tcpdf.php');
 
@@ -75,9 +57,141 @@ $this->Cell(0, 5, 'DIRECCIÓN DE ADMINISTRACIÓN', 0, 1, 'C');
 
 }
 
-    
+
+//imprimir toda los movimientos
+if ($ruta[1] == "imprimirTodo") {
+
+  $curl = curl_init();
+curl_setopt_array($curl, array(
+    CURLOPT_URL => BASE_URL_SERVER . "src/control/Movimiento.php?tipo=listarMovimientos&sesion=" . $_SESSION['sesion_id'] . "&token=" . $_SESSION['sesion_token'],
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_FOLLOWLOCATION => true,
+    CURLOPT_ENCODING => "",
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 30,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => "GET",
+    CURLOPT_HTTPHEADER => array(
+        "x-rapidapi-host: " . BASE_URL_SERVER,
+        "x-rapidapi-key: XXXX"
+    ),
+));
+$response = curl_exec($curl);
+$err = curl_error($curl);
+curl_close($curl);
+if ($err) {
+    echo "cURL Error #:" . $err;
+} else {
+    $respuesta = json_decode($response);
+
+    $movimiento = $respuesta->movimientos;
+
+    $contenido_pdf = '';
+
+    $contenido_pdf .= '
+    <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    .datos { margin-top: 20px; margin-bottom: 20px; }
+    .datos p { margin: 5px 0; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+    .cuerpo th, .cuerpo td { padding: 8px; text-align: center; border:1px solid black;font-size:8px }
+    </style>
+
+    <div class="datos">
+      <p><strong>ENTIDAD:</strong> DIRECCIÓN REGIONAL DE EDUCACIÓN - AYACUCHO</p>
+      <p><strong>ÁREA:</strong> OFICINA DE ADMINISTRACIÓN</p>
+      <p><strong>ORIGEN:</strong>Todos</p>
+      <p><strong>DESTINO:</strong>Todos</p>
+      <p><strong>MOTIVO (*):</strong> ______________________________________ </p>
+    </div>
+
+    <table class="cuerpo">
+      <thead>
+        <tr>
+          <th>ITEM</th>
+          <th>ID</th>
+          <th>AMBIENTE ORIGEN</th>
+          <th>AMBIENTE DESTINO</th>
+          <th>USUARIO</th>
+          <th>FECHA REGISTRO</th>
+          <th>DESCRIPCION</th>
+          <th>INSTITUCION</th>
+        </tr>
+      </thead>
+      <tbody>';
+        $i = 1;
+        foreach ($movimiento as $movimientos) {
+            $contenido_pdf .= '<tr>';
+            $contenido_pdf .= '<td>' . $i . '</td>';
+            $contenido_pdf .= '<td>' . $movimientos->id . '</td>';
+            $contenido_pdf .= '<td>' . $movimientos->ambiente_origen_nombre . '</td>';
+            $contenido_pdf .= '<td>' . $movimientos->ambiente_destino_nombre . '</td>';
+            $contenido_pdf .= '<td>' . $movimientos->usuario_nombre . '</td>';
+            $contenido_pdf .= '<td>' . $movimientos->fecha_registro . '</td>';
+            $contenido_pdf .= '<td>' . $movimientos->descripcion . '</td>';
+            $contenido_pdf .= '<td>' . $movimientos->institucion_nombre . '</td>';
+            $contenido_pdf .= '</tr>';
+            $i++;
+        }
 
 
+    $contenido_pdf .= '</tbody></table>';
+
+    $meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    $fecha = date('d') . ' de ' . $meses[date('n') - 1] . ' del ' . date('Y');
+
+    $contenido_pdf .= '<p style="text-align: right;">Ayacucho, ' . $fecha . '</p>';
+
+    $contenido_pdf .= '
+    <table style="width:100%;border:none;">
+      <tr>
+        <td style="width: 50%; text-align: center;">
+          ------------------------------<br>
+          ENTREGUÉ CONFORME
+        </td>
+        <td style="width: 50%; text-align: center;">
+          ------------------------------<br>
+          RECIBÍ CONFORME
+        </td>
+      </tr>
+    </table>
+    ';
+
+
+    // GENERA PDF
+    $pdf = new MYPDF();
+    $pdf->SetCreator(PDF_CREATOR);
+    $pdf->SetAuthor('Catalino');
+    $pdf->SetTitle('Movimientos');
+    $pdf->SetMargins(PDF_MARGIN_LEFT, 55, PDF_MARGIN_RIGHT);
+    $pdf->SetAutoPageBreak(true, 10);
+    $pdf->SetFont('helvetica', '', 12);
+    $pdf->AddPage();
+    $pdf->writeHTML($contenido_pdf, true, false, true, false, '');
+    $pdf->Output('Movimientos.pdf', 'I');
+    exit;
+}
+
+}else{
+
+$curl = curl_init();
+curl_setopt_array($curl, array(
+    CURLOPT_URL => BASE_URL_SERVER . "src/control/Movimiento.php?tipo=buscar_movimiento_id&sesion=" . $_SESSION['sesion_id'] . "&token=" . $_SESSION['sesion_token'] . "&data=" . $ruta[1],
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_FOLLOWLOCATION => true,
+    CURLOPT_ENCODING => "",
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 30,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => "GET",
+    CURLOPT_HTTPHEADER => array(
+        "x-rapidapi-host: " . BASE_URL_SERVER,
+        "x-rapidapi-key: XXXX"
+    ),
+));
+$response = curl_exec($curl);
+$err = curl_error($curl);
+curl_close($curl);
 if ($err) {
     echo "cURL Error #:" . $err;
 } else {
@@ -173,7 +287,8 @@ if ($err) {
     $pdf->writeHTML($html_firmas, true, false, true, false, '');
 
     $pdf->Output('papeleta_rotacion.pdf', 'I');
+    exit;
 }
 
-
+}
     

@@ -10,6 +10,16 @@ class BienModel
         $this->conexion = new Conexion();
         $this->conexion = $this->conexion->connect();
     }
+
+    public function ObtenerBienes(){
+     $array = array();
+     $sql = $this->conexion->query("SELECT * FROM bienes");
+     while ($objeto = $sql->fetch_object()) {
+            array_push($array, $objeto);
+        }
+        return $array;
+    }
+
     public function registrarBien($ambiente, $cod_patrimonial, $denominacion, $marca, $modelo, $tipo, $color, $serie, $dimensiones, $valor, $situacion, $estado_conservacion, $observaciones, $id_usuario,$id_ingreso)
     {
         $sql = $this->conexion->query("INSERT INTO bienes (id_ingreso_bienes ,id_ambiente,cod_patrimonial, denominacion, marca,modelo,tipo,color,serie,dimensiones,valor,situacion,estado_conservacion,observaciones,usuario_registro ) VALUES ('$id_ingreso','$ambiente', '$cod_patrimonial','$denominacion', '$marca', '$modelo', '$tipo', '$color', '$serie', '$dimensiones', '$valor', '$situacion', '$estado_conservacion', '$observaciones', '$id_usuario')");
