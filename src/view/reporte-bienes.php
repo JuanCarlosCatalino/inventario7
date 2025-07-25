@@ -89,7 +89,7 @@ $activeWorksheet->setTitle("hoja 1");
 // Estos headers fuerzan la descarga
 ob_clean();
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-header('Content-Disposition: attachment;filename="hello world.xlsx"');
+header('Content-Disposition: attachment;filename="Generar Reporte.xlsx"');
 header('Cache-Control: max-age=0');
 
 $writer = new Xlsx($spreadsheet);

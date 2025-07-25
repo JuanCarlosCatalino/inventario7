@@ -9,8 +9,10 @@ require_once('./vendor/tecnickcom/tcpdf/tcpdf.php');
 
 class MYPDF extends TCPDF {
     public function Header() {
-        $img1 = $_SERVER['DOCUMENT_ROOT'] . '/inventario7/src/view/pp/assets/images/drea.jpg';
-        $img2 = $_SERVER['DOCUMENT_ROOT'] . '/inventario7/src/view/pp/assets/images/gobi.jpg';
+        $img1 = $_SERVER['DOCUMENT_ROOT'] . './inventario7/src/view/pp/assets/images/drea.jpeg';
+        $img2 = $_SERVER['DOCUMENT_ROOT'] . './inventario7/src/view/pp/assets/images/gobi.jpeg';
+       // $imgIzquierda = _DIR_ . '/../../img/drea.jpg';
+      //$imgDerecha   = _DIR_ . '/../../img/gobi.png';
 
         $this->Image($img1, 15, 8, 25, '', 'jpg');
         $this->Image($img2, 170, 8, 25, '', 'jpg');
