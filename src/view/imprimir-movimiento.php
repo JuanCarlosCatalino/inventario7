@@ -9,14 +9,6 @@ require_once('./vendor/tecnickcom/tcpdf/tcpdf.php');
 
 class MYPDF extends TCPDF {
     public function Header() {
-        $img1 = $_SERVER['DOCUMENT_ROOT'] . './inventario7/src/view/pp/assets/images/drea.jpeg';
-        $img2 = $_SERVER['DOCUMENT_ROOT'] . './inventario7/src/view/pp/assets/images/gobi.jpeg';
-       // $imgIzquierda = _DIR_ . '/../../img/drea.jpg';
-      //$imgDerecha   = _DIR_ . '/../../img/gobi.png';
-
-        $this->Image($img1, 15, 8, 25, '', 'jpg');
-        $this->Image($img2, 170, 8, 25, '', 'jpg');
-
         $this->SetY(10);
         $this->SetFont('helvetica', 'B', 10);
        $this->SetFont('helvetica', '', 10);
@@ -37,6 +29,13 @@ $this->Cell(0, 5, 'DIRECCIÓN DE ADMINISTRACIÓN', 0, 1, 'C');
 
         $this->SetFont('helvetica', 'B', 12);
         $this->Cell(0, 8, 'PAPELETA DE ROTACIÓN DE BIENES', 0, 1, 'C');
+        $img1 = $_SERVER['DOCUMENT_ROOT'] . './inventario7/src/view/pp/assets/images/drea.jpeg';
+        $img2 = $_SERVER['DOCUMENT_ROOT'] . './inventario7/src/view/pp/assets/images/gobi.jpeg';
+       // $imgIzquierda = _DIR_ . '/../../img/drea.jpg';
+      //$imgDerecha   = _DIR_ . '/../../img/gobi.png';
+
+        $this->Image($img1, 15, 8, 25, '', 'jpeg');
+        $this->Image($img2, 170, 8, 25, '', 'jpeg');
     }
 
     public function Footer() {
@@ -98,14 +97,6 @@ if ($err) {
     table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
     .cuerpo th, .cuerpo td { padding: 8px; text-align: center; border:1px solid black;font-size:8px }
     </style>
-
-    <div class="datos">
-      <p><strong>ENTIDAD:</strong> DIRECCIÓN REGIONAL DE EDUCACIÓN - AYACUCHO</p>
-      <p><strong>ÁREA:</strong> OFICINA DE ADMINISTRACIÓN</p>
-      <p><strong>ORIGEN:</strong>Todos</p>
-      <p><strong>DESTINO:</strong>Todos</p>
-      <p><strong>MOTIVO (*):</strong> ______________________________________ </p>
-    </div>
 
     <table class="cuerpo">
       <thead>

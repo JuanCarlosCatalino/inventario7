@@ -21,8 +21,19 @@ $objUsuario = new UsuarioModel();
 $objAdmin = new AdminModel();
 
 //variables de sesion
-$id_sesion = $_POST['sesion'];
-$token = $_POST['token'];
+$id_sesion = $_REQUEST['sesion'];
+$token = $_REQUEST['token'];
+
+if($tipo == "listarUsuarios"){
+  $arr_Respuesta = array('status'=> false, 'msg'=>'Error iniciar proceso');
+  if ($objSesion->verificar_sesion_si_activa($id_sesion, $token)) {
+    $arrUsuario = $objUsuario->listarUsuarios();
+    $arr_Respuesta['contenido'] = $arrUsuario;
+    $arr_Respuesta['status'] = true;
+    $arr_Respuesta['msg'] = 'correcto';
+  }
+  echo json_encode($arr_Respuesta);
+}
 
 if ($tipo == "reset_passwordd") {
   $arr_Respuesta = array('status'=> false, 'msg'=>'Error iniciar proceso');

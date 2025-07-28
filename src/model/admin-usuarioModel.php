@@ -10,6 +10,14 @@ class UsuarioModel
         $this->conexion = new Conexion();
         $this->conexion = $this->conexion->connect();
     }
+    public function listarUsuarios(){
+        $res = array();
+        $sql = $this->conexion->query("SELECT * FROM usuarios");
+        while ($objeto = $sql->fetch_object()) {
+            array_push($res, $objeto);
+        }
+        return $res;
+    }
     public function registrarUsuario($dni, $apellidos_nombres,$correo, $telefono,$password)
     {
         $sql = $this->conexion->query("INSERT INTO usuarios (dni, nombres_apellidos, correo, telefono, password) VALUES ('$dni','$apellidos_nombres','$correo','$telefono','$password')");

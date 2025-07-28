@@ -43,7 +43,7 @@
         <div class="card">
             <div class="card-body">
                 <a href="<?= BASE_URL ?>reporte-bienes" class="btn btn-success"><i class="fa fa-file-excel"> generar reporte </i> </a>
-                 <a href="<?php BASE_URL;?>imprimir-bienes/imprimirTodo" class="btn btn-danger" title="Generar pdf"><i class="fa fa-file-pdf">Generar PDF</i></a>
+                 <a href="<?php BASE_URL;?>imprimir-bienes" class="btn btn-danger" title="Generar pdf"><i class="fa fa-file-pdf">Generar PDF</i></a>
                 <h4 class="card-title">Resultados de Búsqueda</h4>
                 <div id="filtros_tabla_header" class="form-group  row page-title-box d-flex align-items-center justify-content-between m-0 mb-1 p-0">
                     <input type="hidden" id="pagina" value="1">

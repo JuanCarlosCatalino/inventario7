@@ -3,7 +3,6 @@ require_once('./vendor/tecnickcom/tcpdf/tcpdf.php');
 
 class MYPDF extends TCPDF {
     public function Header() {
-
         $this->SetY(10);
         $this->SetFont('helvetica', 'B', 10);
        $this->SetFont('helvetica', '', 10);
@@ -23,7 +22,7 @@ $this->Cell(0, 5, 'DIRECCIÓN DE ADMINISTRACIÓN', 0, 1, 'C');
         $this->Cell(0, 5, 'ANEXO – 4 –', 0, 1, 'C');
 
         $this->SetFont('helvetica', 'B', 12);
-        $this->Cell(0, 8, 'REPORTE BIENES', 0, 1, 'C');
+        $this->Cell(0, 8, 'REPORTE USUARIOS', 0, 1, 'C');
         $img1 = $_SERVER['DOCUMENT_ROOT'] . '/inventario7/src/view/pp/assets/images/drea.jpeg';
         $img2 = $_SERVER['DOCUMENT_ROOT'] . '/inventario7/src/view/pp/assets/images/gobi.jpeg';
 
@@ -51,10 +50,9 @@ $this->Cell(0, 5, 'DIRECCIÓN DE ADMINISTRACIÓN', 0, 1, 'C');
 
 }
 
-
   $curl = curl_init();
 curl_setopt_array($curl, array(
-    CURLOPT_URL => BASE_URL_SERVER . "src/control/Bien.php?tipo=ObtenerTodosBienes&sesion=" . $_SESSION['sesion_id'] . "&token=" . $_SESSION['sesion_token'],
+    CURLOPT_URL => BASE_URL_SERVER . "src/control/Usuario.php?tipo=listarUsuarios&sesion=" . $_SESSION['sesion_id'] . "&token=" . $_SESSION['sesion_token'],
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_FOLLOWLOCATION => true,
     CURLOPT_ENCODING => "",
@@ -74,7 +72,7 @@ if ($err) {
     echo "cURL Error #:" . $err;
 } else {
     $respuesta = json_decode($response);
-    $bienes = $respuesta->bienes;
+    $usuarios = $respuesta->contenido;
 
     $contenido_pdf = '';
 
@@ -91,31 +89,26 @@ if ($err) {
       <thead>
         <tr>
           <th>ITEM</th>
-          <th>ID</th>
-          <th>AMBIENTE</th>
-          <th>COD PATRIMONIAL</th>
-          <th>DENOMINACION</th>
-          <th>MARCA</th>
-          <th>VALOR</th>
-          <th>OBSERVACIONES</th>
+          <th>DNI</th>
+          <th>NOMBRES</th>
+          <th>CORREO</th>
+          <th>TELEFONO</th>
+           <th>ESTADO</th>
           <th>FECHA REGISTRO</th>
-          <th>USUARIO REGISTRO</th>
         </tr>
       </thead>
       <tbody>';
         $i = 1;
-        foreach ($bienes as $bien) {
+        foreach ($usuarios as $datos) {          
+            $datos->estado = 1? "activo":"inactivo";
             $contenido_pdf .= '<tr>';
             $contenido_pdf .= '<td>' . $i . '</td>';
-            $contenido_pdf .= '<td>' . $bien->id . '</td>';
-            $contenido_pdf .= '<td>' . $bien->nombreAmbiente . '</td>';
-            $contenido_pdf .= '<td>' . $bien->cod_patrimonial . '</td>';
-            $contenido_pdf .= '<td>' . $bien->denominacion . '</td>';
-            $contenido_pdf .= '<td>' . $bien->marca . '</td>';
-            $contenido_pdf .= '<td>' . $bien->valor . '</td>';
-            $contenido_pdf .= '<td>' . $bien->observaciones . '</td>';
-            $contenido_pdf .= '<td>' . $bien->fecha_registro . '</td>';
-            $contenido_pdf .= '<td>' . $bien->nombreUsuario . '</td>';
+            $contenido_pdf .= '<td>' . $datos->dni . '</td>';
+            $contenido_pdf .= '<td>' . $datos->nombres_apellidos . '</td>';
+            $contenido_pdf .= '<td>' . $datos->correo . '</td>';
+            $contenido_pdf .= '<td>' . $datos->telefono . '</td>';
+            $contenido_pdf .= '<td>' . $datos->estado . '</td>';
+            $contenido_pdf .= '<td>' . $datos->fecha_registro . '</td>';
             $contenido_pdf .= '</tr>';
             $i++;
         }
@@ -148,13 +141,13 @@ if ($err) {
     $pdf = new MYPDF();
     $pdf->SetCreator(PDF_CREATOR);
     $pdf->SetAuthor('Catalino');
-    $pdf->SetTitle('bienes');
+    $pdf->SetTitle('usuarios');
     $pdf->SetMargins(PDF_MARGIN_LEFT, 55, PDF_MARGIN_RIGHT);
     $pdf->SetAutoPageBreak(true, 10);
     $pdf->SetFont('helvetica', '', 12);
     $pdf->AddPage();
     $pdf->writeHTML($contenido_pdf, true, false, true, false, '');
-    $pdf->Output('reporte-bienes.pdf', 'I');
+    $pdf->Output('reporte-usuarios.pdf', 'I');
     exit;
 }
 
